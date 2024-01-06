@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import { models } from "../models";
 import { HttpError } from "../helpers/HttpError";
 import { avatarBaseUrl, avatarSettings } from "../helpers/constants";
-import { RequestWithUser } from "../helpers/customTypes";
+import { RequestExtended } from "../helpers/customTypes";
 dotenv.config();
 const { SECRET_KEY } = process.env;
 
@@ -74,7 +74,7 @@ export const signin = async (
 };
 
 export const logout = async (
-  req: RequestWithUser,
+  req: RequestExtended,
   res: Response,
   next: NextFunction
 ) => {

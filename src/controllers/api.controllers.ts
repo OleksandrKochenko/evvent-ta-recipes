@@ -1,8 +1,11 @@
 import { Request, Response, NextFunction } from "express";
+import sharp from "sharp";
+import fs from "fs/promises";
 import { models } from "../models";
 import { HttpError } from "../helpers/HttpError";
-import { RequestWithUser } from "../helpers/customTypes";
+import { RequestExtended } from "../helpers/customTypes";
 import { limit } from "../helpers/constants";
+import { cloudinaryLib } from "../helpers/cloudinary";
 
 export const getAllCategories = async (
   req: Request,
@@ -79,7 +82,7 @@ export const getRecipes = async (
 };
 
 export const getMyRecipes = async (
-  req: RequestWithUser,
+  req: RequestExtended,
   res: Response,
   next: NextFunction
 ) => {
@@ -106,7 +109,7 @@ export const getMyRecipes = async (
 };
 
 export const getFavorites = async (
-  req: RequestWithUser,
+  req: RequestExtended,
   res: Response,
   next: NextFunction
 ) => {
@@ -154,7 +157,7 @@ export const getRecipeById = async (
 };
 
 export const updateFavoriteRecipe = async (
-  req: RequestWithUser,
+  req: RequestExtended,
   res: Response,
   next: NextFunction
 ) => {
@@ -187,6 +190,68 @@ export const updateFavoriteRecipe = async (
         message: `Recipe with id ${recipeId} added to favorites`,
       });
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const addRecipe = async (
+  req: RequestExtended,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { _id: owner } = req.user!;
+    const { path: oldPath } = req.file!;
+
+    const newPath = oldPath.replace(/\.[^/.]+$/, "") + ".webp";
+    await sharp(oldPath).webp({ quality: 60 }).toFile(newPath);
+
+    console.log("body", req.body);
+
+    const fileData = await cloudinaryLib.uploader.upload(newPath, {
+      folder: "recipes",
+    });
+
+    const preview = fileData.url;
+    const insertIdx = preview.indexOf("upload/");
+
+    // creats url for compressed preview img
+    const thumb =
+      preview.slice(0, insertIdx) +
+      "upload/q_30/" +
+      preview.slice(insertIdx + 7);
+
+    await fs.unlink(oldPath);
+    await fs.unlink(newPath);
+
+    const recipe = await models.Recipe.create({
+      ...req.body,
+      preview,
+      thumb,
+      owner,
+    });
+    res.json({ message: "New recipe created", id: recipe._id });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteRecipe = async (
+  req: RequestExtended,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { _id: owner } = req.user!;
+    const { id: recipeId } = req.params!;
+
+    const recipe = await models.Recipe.findOne({ _id: recipeId, owner });
+    if (!recipe) throw HttpError(404, `Recipe with id ${recipeId} not found`);
+
+    await models.Recipe.deleteOne({ _id: recipeId, owner });
+
+    res.json({ message: "Recipe deleted", id: recipeId });
   } catch (error) {
     next(error);
   }

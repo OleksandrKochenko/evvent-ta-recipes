@@ -12,8 +12,9 @@ export interface MongoError extends Partial<MongooseError> {
   code: number;
 }
 
-export interface RequestWithUser extends Partial<Request> {
+export interface RequestExtended extends Partial<Request> {
   user?: { _id: ObjectId; name: string };
+  file?: Express.Multer.File;
 }
 
 export interface JwtPayloadWithId extends Partial<JwtPayload> {

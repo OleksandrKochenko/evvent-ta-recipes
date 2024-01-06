@@ -2,13 +2,13 @@ import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { models } from "../models";
-import { JwtPayloadWithId, RequestWithUser } from "../helpers/customTypes";
+import { JwtPayloadWithId, RequestExtended } from "../helpers/customTypes";
 import { HttpError } from "../helpers/HttpError";
 dotenv.config();
 const { SECRET_KEY } = process.env;
 
 export const authenticate = async (
-  req: RequestWithUser,
+  req: RequestExtended,
   res: Response,
   next: NextFunction
 ) => {
