@@ -152,3 +152,42 @@ export const getRecipeById = async (
     next(error);
   }
 };
+
+export const updateFavoriteRecipe = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { _id: userId } = req.user!;
+    const { id: recipeId } = req.params!;
+
+    const recipe = await models.Recipe.findById(recipeId);
+    if (!recipe) throw HttpError(404, `Recipe with id ${recipeId} not found`);
+
+    const favoriteRecipe = await models.Recipe.findOne({
+      _id: recipeId,
+      favorite: { $in: userId },
+    });
+
+    if (favoriteRecipe) {
+      await models.Recipe.findByIdAndUpdate(
+        { _id: recipeId },
+        { $pull: { favorite: userId } }
+      );
+      res.json({
+        message: `Recipe with id ${recipeId} removed from favorites`,
+      });
+    } else {
+      await models.Recipe.findByIdAndUpdate(
+        { _id: recipeId },
+        { $push: { favorite: userId } }
+      );
+      res.json({
+        message: `Recipe with id ${recipeId} added to favorites`,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
