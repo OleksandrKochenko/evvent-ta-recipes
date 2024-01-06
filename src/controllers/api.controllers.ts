@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { models } from "../models";
 import { HttpError } from "../helpers/HttpError";
+import { RequestWithUser } from "../helpers/customTypes";
+import { limit } from "../helpers/constants";
 
 export const getAllCategories = async (
   req: Request,
@@ -43,7 +45,6 @@ export const getRecipes = async (
 ) => {
   try {
     const { page = 1, category, title, ingredient } = req.query;
-    const limit = 8;
     const skip = ((page as number) - 1) * limit;
     const titleRegex = new RegExp(`.*${title}.*`, "i");
     const categoryRegex = new RegExp(
@@ -69,6 +70,64 @@ export const getRecipes = async (
 
     const total = await models.Recipe.find({
       $or: [...searchCases],
+    }).countDocuments();
+
+    res.json({ total, recipes });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMyRecipes = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { _id: owner } = req.user!;
+    const { page = 1 } = req.query!;
+    const skip = ((page as number) - 1) * limit;
+
+    const recipes = await models.Recipe.find(
+      { owner },
+      "title favorite category description thumb owner",
+      {
+        skip,
+        limit,
+      }
+    ).populate("owner", "name email");
+
+    const total = await models.Recipe.find({ owner }).countDocuments();
+
+    res.json({ total, recipes });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFavorites = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { _id } = req.user!;
+    const { page = 1 } = req.query!;
+    const skip = ((page as number) - 1) * limit;
+
+    console.log("userId", _id);
+
+    const recipes = await models.Recipe.find(
+      { favorite: { $in: [_id] } },
+      "title favorite category description thumb",
+      {
+        skip,
+        limit,
+      }
+    );
+
+    const total = await models.Recipe.find({
+      favorite: { $in: [_id] },
     }).countDocuments();
 
     res.json({ total, recipes });
