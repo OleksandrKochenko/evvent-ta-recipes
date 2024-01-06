@@ -5,6 +5,7 @@ import logger from "morgan";
 import cors from "cors";
 import { apiRouter } from "./routes/api.routes";
 import { ExpressError } from "./helpers/customTypes";
+import { authRouter } from "./routes/auth.routes";
 
 dotenv.config();
 
@@ -21,8 +22,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/api", apiRouter);
-// app.use("/api/recipes", recipesRouter);
-// app.use("/api/ingredients", ingredientsRouter);
+app.use("/auth", authRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
