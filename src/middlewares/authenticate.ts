@@ -7,8 +7,6 @@ import { HttpError } from "../helpers/HttpError";
 dotenv.config();
 const { SECRET_KEY } = process.env;
 
-console.log("SECRET_KEY", SECRET_KEY);
-
 export const authenticate = async (
   req: RequestWithUser,
   res: Response,

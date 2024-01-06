@@ -54,7 +54,7 @@ export const signin = async (
     if (!pswrdCompare) throw HttpError(401, "Email or password is wrong");
 
     const payload = {
-      id: user._id,
+      _id: user._id,
     };
     const token = jwt.sign(payload, SECRET_KEY as string, { expiresIn: "23h" });
 
@@ -81,7 +81,7 @@ export const logout = async (
   try {
     const { _id } = req.user!;
     await models.User.findByIdAndUpdate(_id, { token: "" });
-    res.status(204).json({ message: "Logout success" });
+    res.status(200).json({ message: "Logout success" });
   } catch (error) {
     next(error);
   }
