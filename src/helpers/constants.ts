@@ -1,6 +1,6 @@
 export const userEmailRegExp = /^\S+@\S+\.\S+$/;
 
-export const messageRequires = "missing required field";
+export const messageRequired = "missing required field";
 
 export const avatarBaseUrl = "https://eu.ui-avatars.com/api/";
 

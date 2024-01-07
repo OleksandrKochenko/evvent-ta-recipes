@@ -1,19 +1,19 @@
 import { Schema, model } from "mongoose";
-import { messageRequires, userEmailRegExp } from "../helpers/constants";
+import { messageRequired, userEmailRegExp } from "../helpers/constants";
 
 const userSchema = new Schema(
   {
-    name: { type: String, required: [true, messageRequires] },
+    name: { type: String, required: [true, messageRequired] },
     email: {
       type: String,
       match: userEmailRegExp,
       unique: true,
-      required: [true, messageRequires],
+      required: [true, messageRequired],
     },
     password: {
       type: String,
       minlength: 6,
-      required: [true, messageRequires],
+      required: [true, messageRequired],
     },
     avatarURL: {
       type: String,

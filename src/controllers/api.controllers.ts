@@ -207,8 +207,6 @@ export const addRecipe = async (
     const newPath = oldPath.replace(/\.[^/.]+$/, "") + ".webp";
     await sharp(oldPath).webp({ quality: 60 }).toFile(newPath);
 
-    console.log("body", req.body);
-
     const fileData = await cloudinaryLib.uploader.upload(newPath, {
       folder: "recipes",
     });
