@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logout = exports.signin = exports.signup = void 0;
+exports.logout = exports.getCurrentUser = exports.signin = exports.signup = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
@@ -58,13 +58,29 @@ const signin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
             returnDocument: "after",
             fields: { password: 0, verify: 0, createdAt: 0 },
         });
-        res.json(userSignedIn);
+        res.json({
+            user: {
+                id: userSignedIn === null || userSignedIn === void 0 ? void 0 : userSignedIn._id,
+                name: userSignedIn === null || userSignedIn === void 0 ? void 0 : userSignedIn.name,
+                email: userSignedIn === null || userSignedIn === void 0 ? void 0 : userSignedIn.email,
+                avatarURL: userSignedIn === null || userSignedIn === void 0 ? void 0 : userSignedIn.avatarURL,
+            },
+            token: userSignedIn === null || userSignedIn === void 0 ? void 0 : userSignedIn.token,
+        });
     }
     catch (error) {
         next(error);
     }
 });
 exports.signin = signin;
+const getCurrentUser = (req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { token, _id, name, email, avatarURL } = req.user;
+    res.json({
+        user: { id: _id, name, email, avatarURL },
+        token,
+    });
+});
+exports.getCurrentUser = getCurrentUser;
 const logout = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { _id } = req.user;
