@@ -67,7 +67,15 @@ export const signin = async (
       }
     );
 
-    res.json(userSignedIn);
+    res.json({
+      user: {
+        id: userSignedIn?._id,
+        name: userSignedIn?.name,
+        email: userSignedIn?.email,
+        avatarUrl: userSignedIn?.avatarURL,
+      },
+      token: userSignedIn?.token,
+    });
   } catch (error) {
     next(error);
   }
