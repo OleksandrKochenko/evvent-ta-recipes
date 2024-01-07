@@ -9,6 +9,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 const api_routes_1 = require("./routes/api.routes");
+const auth_routes_1 = require("./routes/auth.routes");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const { PORT = 8000, DB_HOST } = process.env;
@@ -20,8 +21,7 @@ app.get("/", (req, res) => {
     res.send("Welcome to Express & TypeScript Server");
 });
 app.use("/api", api_routes_1.apiRouter);
-// app.use("/api/recipes", recipesRouter);
-// app.use("/api/ingredients", ingredientsRouter);
+app.use("/auth", auth_routes_1.authRouter);
 app.use((req, res) => {
     res.status(404).json({ message: "Not found" });
 });
