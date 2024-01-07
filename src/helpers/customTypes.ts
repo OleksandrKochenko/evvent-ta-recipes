@@ -13,7 +13,13 @@ export interface MongoError extends Partial<MongooseError> {
 }
 
 export interface RequestExtended extends Partial<Request> {
-  user?: { _id: ObjectId; name: string };
+  user?: {
+    _id: ObjectId;
+    name: string;
+    email: string;
+    avatarURL: string;
+    token: string;
+  };
   file?: Express.Multer.File;
 }
 

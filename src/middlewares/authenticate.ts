@@ -23,7 +23,7 @@ export const authenticate = async (
     if (!user || !user.token) {
       next(HttpError(401));
     } else {
-      req.user = user;
+      req.user = user as RequestExtended["user"];
     }
     next();
   } catch {

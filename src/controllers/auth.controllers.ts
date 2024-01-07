@@ -72,13 +72,26 @@ export const signin = async (
         id: userSignedIn?._id,
         name: userSignedIn?.name,
         email: userSignedIn?.email,
-        avatarUrl: userSignedIn?.avatarURL,
+        avatarURL: userSignedIn?.avatarURL,
       },
       token: userSignedIn?.token,
     });
   } catch (error) {
     next(error);
   }
+};
+
+export const getCurrentUser = async (
+  req: RequestExtended,
+  res: Response,
+  _next: NextFunction
+) => {
+  const { token, _id, name, email, avatarURL } = req.user!;
+
+  res.json({
+    user: { id: _id, name, email, avatarURL },
+    token,
+  });
 };
 
 export const logout = async (
