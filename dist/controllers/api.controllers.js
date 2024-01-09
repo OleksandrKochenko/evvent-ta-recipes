@@ -133,16 +133,30 @@ const updateFavoriteRecipe = (req, res, next) => __awaiter(void 0, void 0, void 
             favorite: { $in: userId },
         });
         if (favoriteRecipe) {
-            yield models_1.models.Recipe.findByIdAndUpdate({ _id: recipeId }, { $pull: { favorite: userId } });
-            res.json({
-                message: `Recipe with id ${recipeId} removed from favorites`,
+            const recipe = yield models_1.models.Recipe.findByIdAndUpdate({ _id: recipeId }, { $pull: { favorite: userId } }, {
+                returnDocument: "after",
+                fields: {
+                    title: 1,
+                    favorite: 1,
+                    category: 1,
+                    description: 1,
+                    thumb: 1,
+                },
             });
+            res.json(recipe);
         }
         else {
-            yield models_1.models.Recipe.findByIdAndUpdate({ _id: recipeId }, { $push: { favorite: userId } });
-            res.json({
-                message: `Recipe with id ${recipeId} added to favorites`,
+            const recipe = yield models_1.models.Recipe.findByIdAndUpdate({ _id: recipeId }, { $push: { favorite: userId } }, {
+                returnDocument: "after",
+                fields: {
+                    title: 1,
+                    favorite: 1,
+                    category: 1,
+                    description: 1,
+                    thumb: 1,
+                },
             });
+            res.json(recipe);
         }
     }
     catch (error) {

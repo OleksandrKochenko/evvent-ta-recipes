@@ -174,21 +174,37 @@ export const updateFavoriteRecipe = async (
     });
 
     if (favoriteRecipe) {
-      await models.Recipe.findByIdAndUpdate(
+      const recipe = await models.Recipe.findByIdAndUpdate(
         { _id: recipeId },
-        { $pull: { favorite: userId } }
+        { $pull: { favorite: userId } },
+        {
+          returnDocument: "after",
+          fields: {
+            title: 1,
+            favorite: 1,
+            category: 1,
+            description: 1,
+            thumb: 1,
+          },
+        }
       );
-      res.json({
-        message: `Recipe with id ${recipeId} removed from favorites`,
-      });
+      res.json(recipe);
     } else {
-      await models.Recipe.findByIdAndUpdate(
+      const recipe = await models.Recipe.findByIdAndUpdate(
         { _id: recipeId },
-        { $push: { favorite: userId } }
+        { $push: { favorite: userId } },
+        {
+          returnDocument: "after",
+          fields: {
+            title: 1,
+            favorite: 1,
+            category: 1,
+            description: 1,
+            thumb: 1,
+          },
+        }
       );
-      res.json({
-        message: `Recipe with id ${recipeId} added to favorites`,
-      });
+      res.json(recipe);
     }
   } catch (error) {
     next(error);
