@@ -118,8 +118,6 @@ export const getFavorites = async (
     const { page = 1 } = req.query!;
     const skip = ((page as number) - 1) * limit;
 
-    console.log("userId", _id);
-
     const recipes = await models.Recipe.find(
       { favorite: { $in: [_id] } },
       "title favorite category description thumb",

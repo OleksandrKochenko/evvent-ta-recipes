@@ -92,7 +92,6 @@ const getFavorites = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         const { _id } = req.user;
         const { page = 1 } = req.query;
         const skip = (page - 1) * constants_1.limit;
-        console.log("userId", _id);
         const recipes = yield models_1.models.Recipe.find({ favorite: { $in: [_id] } }, "title favorite category description thumb", {
             skip,
             limit: constants_1.limit,
