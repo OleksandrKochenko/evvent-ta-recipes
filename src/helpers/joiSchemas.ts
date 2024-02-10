@@ -42,5 +42,5 @@ export const recipeAddSchema = Joi.object({
   }),
   youtube: Joi.string(),
   tags: Joi.array(),
-  ingredients: Joi.array(),
+  ingredients: Joi.array().min(1),
 });

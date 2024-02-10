@@ -45,5 +45,5 @@ exports.recipeAddSchema = joi_1.default.object({
     }),
     youtube: joi_1.default.string(),
     tags: joi_1.default.array(),
-    ingredients: joi_1.default.array(),
+    ingredients: joi_1.default.array().min(1),
 });

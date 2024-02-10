@@ -3,23 +3,28 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import logger from "morgan";
 import cors from "cors";
+import path from "path";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "./swagger.docs.json";
+import swaggerOptions from "./swagger.config";
 import { apiRouter } from "./routes/api.routes";
 import { ExpressError } from "./helpers/customTypes";
 import { authRouter } from "./routes/auth.routes";
 
 dotenv.config();
+const { PORT = 8000, DB_HOST } = process.env;
 
 const app: Application = express();
-const { PORT = 8000, DB_HOST } = process.env;
+
+app.set("tmp", path.join(__dirname, "/tmp"));
 
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Welcome to Express & TypeScript Server");
-});
+app.use("/", swaggerUi.serve);
+app.get("/", swaggerUi.setup(swaggerDocument, swaggerOptions));
 
 app.use("/api", apiRouter);
 app.use("/auth", authRouter);

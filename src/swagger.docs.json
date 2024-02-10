@@ -1,0 +1,1501 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "REST API for recipes sharing",
+    "description": "API provides CRUD operations for Recipes App with User authorization features",
+    "contact": {
+      "name": "Oleksandr Kochenko",
+      "url": "https://oleksandrkochenko.github.io/personal-page/projects",
+      "email": "kochenko.fop@gmail.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api-recipes-sigma.vercel.app/"
+    },
+    {
+      "url": "http://localhost:4000/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Api",
+      "description": "Operations with Recipes, Categories and Ingredients"
+    },
+    {
+      "name": "Auth",
+      "description": "User authorisation"
+    }
+  ],
+  "paths": {
+    "/auth/signup": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "description": "Register a new user",
+        "operationId": "signup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/auth_signup_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_201"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_400"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_409"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/signin": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "description": "User log in",
+        "operationId": "signin",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/auth_signin_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_401"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/current": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "description": "Check user ligged in",
+        "operationId": "current",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserData"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/auth/signout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "description": "User log out",
+        "operationId": "signout",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/categories": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "description": "All categories of recipes",
+        "operationId": "categories",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "example": [
+                    {
+                      "id": "6462a6cd4c3d0ddd28897f8e",
+                      "name": "Beef"
+                    },
+                    {
+                      "id": "6462a6cd4c3d0ddd28897f95",
+                      "name": "Breakfast"
+                    }
+                  ],
+                  "items": {
+                    "$ref": "#/components/schemas/inline_response_200_1"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/ingredients": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "description": "Returns list of ingredients by query string",
+        "operationId": "ingredients",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "any substring that ingredient name includes",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "asp"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "example": [
+                    {
+                      "id": "640c2dd963a319ea671e3661",
+                      "name": "Asparagus"
+                    },
+                    {
+                      "id": "640c2dd963a319ea671e376e",
+                      "name": "Spaghetti"
+                    }
+                  ],
+                  "items": {
+                    "$ref": "#/components/schemas/inline_response_200_1"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/recipes": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "description": "Returns recipes list in accordance with query parameters <br/> <b>At least 1 query parameter is required</b>",
+        "operationId": "getRecipes",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page number (default 1)",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "2"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "substring in category name of recipes",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "Beef"
+            }
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "description": "substring in title of recipes",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "cheesecak"
+            }
+          },
+          {
+            "name": "ingredient",
+            "in": "query",
+            "description": "id of ingredient",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "640c2dd963a319ea671e365b"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200_2"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Api"
+        ],
+        "description": "Adds a new recipe by authorized user",
+        "operationId": "addRecipe",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/api_recipes_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Succes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_201_1"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_400_1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_422"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/recipes/my": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "description": "Returns recipes of current user",
+        "operationId": "getOwnRecipes",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page number (default 1)",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200_3"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/recipes/{id}": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "description": "Returns recipe by id",
+        "operationId": "getRecipeById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of recipe to return",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "6462a8f74c3d0ddd28898002",
+                "6462a8f74c3d0ddd288980aa",
+                "6462a8f74c3d0ddd2889807f"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeFull"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_422_1"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Api"
+        ],
+        "description": "Deletes recipe by authorized user (only own recipes)",
+        "operationId": "deleteRecipe",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of recipet to delete",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "example": "6462a8f74c3d0ddd28898002"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200_4"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_400_2"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_422_1"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/recipes/favorites": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "description": "Returns user's favorite recipes",
+        "operationId": "getFavoriteRecipes",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200_5"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/recipes/favorites/{id}": {
+      "put": {
+        "tags": [
+          "Api"
+        ],
+        "description": "Change recipe favorite status for current user",
+        "operationId": "updateFavorite",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of recipe to change",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "example": "6462a8f74c3d0ddd28898002"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Recipe"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_422_1"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserData": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UserData_user"
+          },
+          "token": {
+            "type": "string",
+            "description": "login token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NWJhZDJlYTY2MDZmNmFkNTViZTQwMyIsImlhdCI6MTcwMDY3NzE3MSwiZXhwIjoxNzAwNzU5OTcxfQ.FrYosHnedqZ86M53dVpNxSig9RkBQPyFuVgCNKgla10"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "65538751b374715901fe334a"
+          },
+          "name": {
+            "type": "string",
+            "example": "Li Wein"
+          },
+          "email": {
+            "type": "string",
+            "example": "l.wein@mail.com"
+          },
+          "avatar": {
+            "type": "string",
+            "example": "http://res.cloudinary.com/dvloxectq/image/upload/v1699972944/users/gocbynfvtecaobtfrbvd.jpg"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2023-11-16T19:18:25.993Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2023-11-16T19:18:25.993Z"
+          }
+        }
+      },
+      "Recipe": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "6462a8f74c3d0ddd288980ce"
+          },
+          "title": {
+            "type": "string",
+            "example": "Beef Banh Mi Bowls with Sriracha Mayo, Carrot & Pickled Cucumber."
+          },
+          "category": {
+            "type": "string",
+            "example": "Beef"
+          },
+          "description": {
+            "type": "string",
+            "example": "These beef banh mi bowls are a deconstructed version of the classic Vietnamese sandwich, featuring marinated beef, pickled vegetables, and a spicy sriracha mayo sauce."
+          },
+          "thumb": {
+            "type": "string",
+            "example": "https://www.themealdb.com/images/media/meals/z0ageb1583189517.jpg"
+          },
+          "favorite": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "nullable": true,
+              "example": "65997b775ec0bbcb4c7b2716"
+            }
+          }
+        }
+      },
+      "RecipeFull": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "6462a8f74c3d0ddd288980ce"
+          },
+          "title": {
+            "type": "string",
+            "example": "Beef Banh Mi Bowls with Sriracha Mayo, Carrot & Pickled Cucumber."
+          },
+          "category": {
+            "type": "string",
+            "example": "Beef"
+          },
+          "area": {
+            "type": "string",
+            "example": "British"
+          },
+          "instructions": {
+            "type": "string",
+            "example": "Preheat the oven to 150C/300F/Gas 2.\\r\\nToss the beef and flour together in a bowl with some salt and black peppe..."
+          },
+          "description": {
+            "type": "string",
+            "example": "These beef banh mi bowls are a deconstructed version of the classic Vietnamese sandwich, featuring marinated beef, pickled vegetables, and a spicy sriracha mayo sauce."
+          },
+          "thumb": {
+            "type": "string",
+            "example": "https://www.themealdb.com/images/media/meals/z0ageb1583189517.jpg"
+          },
+          "preview": {
+            "type": "string",
+            "example": "https://res.cloudinary.com/ddbvbv5sp/image/upload/v1678560621/u2r3be2bgqpqyho2dgs6.jpg"
+          },
+          "time": {
+            "type": "string",
+            "example": "210"
+          },
+          "youtube": {
+            "type": "string",
+            "example": "https://www.youtube.com/watch?v=nMyBC9staMU"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "nullable": true,
+              "example": "Meat"
+            }
+          },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecipeFull_ingredients"
+            }
+          },
+          "favorite": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "nullable": true,
+              "example": "65997b775ec0bbcb4c7b2716"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Page not found"
+          }
+        }
+      },
+      "Unauthorized": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "error message",
+            "example": "Unauthorized request"
+          }
+        }
+      },
+      "ServerError": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Server error"
+          }
+        }
+      },
+      "auth_signup_body": {
+        "required": [
+          "email",
+          "name",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User name",
+            "format": "text",
+            "example": "John Johnson"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email, must be in valid email format",
+            "format": "email",
+            "example": "test.user@mail.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "Min 6 characters",
+            "format": "password",
+            "example": "Ng67$32_"
+          }
+        }
+      },
+      "inline_response_201": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User name",
+            "example": "John Johnson"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "example": "test.user@mail.com"
+          },
+          "avatarURL": {
+            "type": "string",
+            "description": "Link to autogenerated User avatar",
+            "example": "https://eu.ui-avatars.com/api/?name=JohnJohnson&size=250&background=A1C08E&rounded=true"
+          }
+        }
+      },
+      "inline_response_400": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "error message",
+            "example": "Invalid length / Field required / Invalid email"
+          }
+        }
+      },
+      "inline_response_409": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "error message",
+            "example": "Email already in use"
+          }
+        }
+      },
+      "auth_signin_body": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email, must be in valid email format",
+            "format": "email",
+            "example": "test.user@mail.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "Min 6 characters",
+            "format": "password",
+            "example": "Ng67$32_"
+          }
+        }
+      },
+      "inline_response_401": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "error message",
+            "example": "Email or password is wrong"
+          }
+        }
+      },
+      "inline_response_200": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "operation message",
+            "example": "Logout success"
+          }
+        }
+      },
+      "inline_response_200_1": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "inline_response_200_2": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "total documents",
+            "example": 34
+          },
+          "recipes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Recipe"
+            }
+          }
+        }
+      },
+      "api_recipes_body": {
+        "required": [
+          "category",
+          "instructions",
+          "time",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Recipe title",
+            "example": "Apple & plum pie"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category of recipe",
+            "enum": [
+              "Seafood",
+              "Lamb",
+              "Side",
+              "Soup",
+              "Pasta",
+              "Beef",
+              "Miscellaneous",
+              "Dessert",
+              "Starter",
+              "Chicken",
+              "Pork",
+              "Goat",
+              "Breakfast",
+              "Vegan",
+              "Vegetarian"
+            ]
+          },
+          "area": {
+            "type": "string",
+            "description": "Area of recipe origin",
+            "example": "Ukraine"
+          },
+          "instructions": {
+            "type": "string",
+            "description": "instructions of the recipe",
+            "example": "Grind the cashew, poppy seeds and cumin seeds into a smooth paste, using as little water as possible. Set aside. \\r\\n\\r\\nDeep fry the sliced onions when it is hot. Don’t overcrowd the oil..."
+          },
+          "description": {
+            "type": "string",
+            "description": "short description of the recipe",
+            "example": "Just prepare this recipe"
+          },
+          "time": {
+            "type": "string",
+            "description": "preparing time of the recipe",
+            "example": "110min"
+          },
+          "youtube": {
+            "type": "string",
+            "description": "link to recipe preparation video",
+            "example": "https://www.youtube.com/watch?v=r7SYVSG5nxo"
+          },
+          "preview": {
+            "type": "string",
+            "description": "Image of the recipe",
+            "format": "binary"
+          }
+        }
+      },
+      "inline_response_201_1": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "New recipe created"
+          },
+          "id": {
+            "type": "string",
+            "example": "655675273556114d810b78b9"
+          }
+        }
+      },
+      "inline_response_400_1": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "error message",
+            "example": "Field required"
+          }
+        }
+      },
+      "inline_response_422": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "error message",
+            "example": "Unaccepted file type / File too large"
+          }
+        }
+      },
+      "inline_response_200_3": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "total documents",
+            "example": 15
+          },
+          "recipes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Recipe"
+            }
+          }
+        }
+      },
+      "inline_response_422_1": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "error message",
+            "example": "Invalid id format"
+          }
+        }
+      },
+      "inline_response_200_4": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Recipe deleted"
+          },
+          "id": {
+            "type": "string",
+            "example": "6556765a52a385843c026e01"
+          }
+        }
+      },
+      "inline_response_400_2": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Is not owner of comment"
+          }
+        }
+      },
+      "inline_response_200_5": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "total documents",
+            "example": 18
+          },
+          "recipes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Recipe"
+            }
+          }
+        }
+      },
+      "UserData_user": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User id",
+            "example": "65bfe5e6d36b5dec12ba8f23"
+          },
+          "name": {
+            "type": "string",
+            "description": "User name",
+            "example": "John Johnson"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "example": "test.user@mail.com"
+          },
+          "avatarURL": {
+            "type": "string",
+            "description": "User email",
+            "example": "https://eu.ui-avatars.com/api/?name=JohnJohnson&size=250&background=A1C08E&rounded=true"
+          }
+        }
+      },
+      "RecipeFull_id": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "65c79a89415875d6c44d3df5"
+          },
+          "name": {
+            "type": "string",
+            "example": "Beef"
+          },
+          "desc": {
+            "type": "string",
+            "example": "Beef is the culinary name for meat from cattle, particularly skeletal muscle. Humans have been..."
+          },
+          "img": {
+            "type": "string",
+            "example": "https://res.cloudinary.com/ddbvbv5sp/image/upload/v1678564124/zzxbvvvye3pnooygfdgg.png"
+          }
+        }
+      },
+      "RecipeFull_ingredients": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "65c79a89415875d6c44d3df5"
+          },
+          "id": {
+            "$ref": "#/components/schemas/RecipeFull_id"
+          },
+          "measure": {
+            "type": "string",
+            "example": "1kg"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
